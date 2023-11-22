@@ -30,18 +30,23 @@ function baz1 () {
     return new Promise((resolve,reject) => {
         resolve(1);
     })
+//        .then((p) => {throw "baz1";})
         .then(foo)
+        .then((p) => {return p + 1;})
+//        .then((p) => {throw "baz2";})
         .then(bar)
+//        .then((p) => {throw "baz3";})
 }
 
 async function baz2 () {
-    let r1 = await 1;
+    let r = await 1;
 //    throw "baz1";
-    let r2 = await foo(r1);
+    r = await foo(r);
+    r = r + 1;
 //    throw "baz2";
-    let r3 = await bar(r2);
+    r = await bar(r);
 //    throw "baz3";
-    return r3;
+    return r;
 }
 
 
