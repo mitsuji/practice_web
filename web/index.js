@@ -15,7 +15,12 @@ window.onload = (e) => {
             let req = new XMLHttpRequest();
             req.open("GET", "/get1");
             req.onload = (event) => {
-                document.querySelector(".content2").innerHTML = req.responseText;
+                try {
+                    document.querySelector(".content2").innerHTML = req.responseText;
+                    throw "error1";
+                } catch (error) {
+                    console.log("error:" + error);
+                }
             };
             req.send();
             document.querySelector(".content3").innerHTML = "Content3!!";
