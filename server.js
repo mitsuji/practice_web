@@ -13,8 +13,9 @@ router.get("/get1", async (context) => {
     await sleep(2);
     context.response.body = "GET1";
 });
-router.get("/get2", (context) => {
+router.get("/get2", async (context) => {
     console.log("GET2");
+    await sleep(2);
     const book1 = {
         id: "1",
         title: "The Hound of the Baskervilles",
