@@ -1,7 +1,8 @@
-// deno run --allow-net --allow-read server.js
+// deno run --allow-net --allow-read --allow-write server.js
 
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
 import { sleep } from "https://deno.land/x/sleep/mod.ts";
+import { DB } from "https://deno.land/x/sqlite/mod.ts";
 
 
 const router = new Router();
@@ -16,19 +17,27 @@ router.get("/get1", async (context) => {
 router.get("/get2", async (context) => {
     console.log("GET2");
     await sleep(2);
-    const book1 = {
-        id: "1",
-        title: "The Hound of the Baskervilles",
-        author: "Conan Doyle, Arthur",
-    };
-    const book2 = {
-        id: "2",
-        title: "foofoofoo",
-        author: "barbarbar",
-    };
-//    context.response.body = "GET2";
-//    context.response.body = book1;
-    context.response.body = [book1,book2];
+//    {
+//        const book1 = {
+//            id: "1",
+//            title: "The Hound of the Baskervilles",
+//            author: "Conan Doyle, Arthur",
+//        };
+//        const book2 = {
+//            id: "2",
+//            title: "foofoofoo",
+//            author: "barbarbar",
+//        };
+////        context.response.body = "GET2";
+////        context.response.body = book1;
+//        context.response.body = [book1,book2];
+//    }
+    {
+        const db = new DB(`${Deno.cwd()}/db/practice.sqlite3`);
+        let r = db.queryEntries("SELECT * FROM TTest1");
+        db.close();
+        context.response.body = r;
+    }
 });
 router.post("/post1", async (context) => {
     const params = await context.request.body({type:"form"}).value;
