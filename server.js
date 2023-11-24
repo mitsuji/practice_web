@@ -6,13 +6,8 @@ import { DB } from "https://deno.land/x/sqlite/mod.ts";
 import mssql from "npm:mssql@10.0.1";
 
 // [TODO] deno で Enctypt=true できない?
+//        https://github.com/denoland/deno/issues/20594
 const mssqlConfig = "Server=172.29.249.104,1433;Database=practice;User Id=practice_rw;Password=prac_rw-1234;Encrypt=false";
-
-const mssqlPool = new mssql.ConnectionPool(mssqlConfig);
-if(typeof mssqlPool.config.options.useUTC == "undefined")
-{
-  mssqlPool.config.options.useUTC = false;
-}
 
 const router = new Router();
 
@@ -50,11 +45,11 @@ router.get("/get2", async (context) => {
 });
 router.get("/get3", async (context) => {
     console.log("GET3");
-    let conn = await mssqlPool.connect();
 //    let conn = await mssql.connect(mssqlConfig);
-    const dbReq = conn.request();
+//    const request = conn.request();
+    const request = mssqlConn.request();
     const query = `SELECT * FROM TTest1;`;
-    const rs = await dbReq.query(query);
+    const rs = await request.query(query);
     const r = rs.recordset[0];
     console.log(r["testId"]);
     console.log(r["testNum"]);
@@ -69,8 +64,7 @@ router.post("/post1", async (context) => {
     context.response.body = "POST1";
 });
 router.post("/post2", async (context) => {
-    let conn = await mssqlPool.connect();
-    const request = conn.request();
+    const request = mssqlConn.request();
     request.input('Num', mssql.Int, 300);
     request.input('Text', mssql.NVarChar, "ABCD3234");
     request.output('Id', mssql.Int);
@@ -110,5 +104,11 @@ app.use(router.allowedMethods());
 
 
 
+const mssqlPool = new mssql.ConnectionPool(mssqlConfig);
+if(typeof mssqlPool.config.options.useUTC == "undefined")
+{
+  mssqlPool.config.options.useUTC = false;
+}
+const mssqlConn = await mssqlPool.connect();
 
 await app.listen({ port: 8080 });
