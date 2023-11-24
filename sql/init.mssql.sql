@@ -32,14 +32,76 @@ GO
 
 
 ---
---- Table Definitions
+--- Auto DROPs
 ---
-IF OBJECT_ID ('Prac_TTest1','U') IS NOT NULL
+DECLARE @Name varchar(128)
+DECLARE @Type varchar(2)
+DECLARE CUR CURSOR LOCAL FOR
+    SELECT name, type FROM sys.objects
+    where (type = N'SO' OR type = N'FN' OR type = N'U' OR type = N'V' OR type = N'P')
+
+OPEN CUR;
+
+FETCH NEXT FROM CUR
+INTO @Name, @Type;
+
+WHILE @@FETCH_STATUS = 0
 BEGIN
-  DROP TABLE Prac_TTest1;
+
+  IF @Type = 'P'
+    BEGIN
+      DECLARE @DropProcedureSQL nvarchar(max);
+      SET @DropProcedureSQL = N'DROP PROCEDURE [dbo].[' + @Name + N']';
+      EXEC sp_executesql
+      @DropProcedureSQL;
+    END
+
+  IF @Type = 'V'
+    BEGIN
+      DECLARE @DropViewSQL nvarchar(max);
+      SET @DropViewSQL = N'DROP VIEW [dbo].[' + @Name + N']';
+      EXEC sp_executesql
+      @DropViewSQL;
+    END
+
+  IF @Type = 'U'
+    BEGIN
+      DECLARE @DropTableSQL nvarchar(max);
+      SET @DropTableSQL = N'DROP TABLE [dbo].[' + @Name + N']';
+      EXEC sp_executesql
+      @DropTableSQL;
+    END
+
+  IF @Type = 'FN'
+    BEGIN
+      DECLARE @DropFunctionSQL nvarchar(max);
+      SET @DropFunctionSQL = N'DROP FUNCTION [dbo].[' + @Name + N']';
+      EXEC sp_executesql
+      @DropFunctionSQL;
+    END
+
+  IF @Type = 'SO'
+    BEGIN
+      DECLARE @DropSequenceSQL nvarchar(max);
+      SET @DropSequenceSQL = N'DROP SEQUENCE [dbo].[' + @Name + N']';
+      EXEC sp_executesql
+      @DropSequenceSQL;
+    END
+
+  FETCH NEXT FROM CUR
+  INTO @Name, @Type;
+
 END
 GO
-CREATE TABLE Prac_TTest1 (
+
+
+
+
+
+---
+--- Table Definitions
+---
+CREATE TABLE TTest1 (
      testId [int] IDENTITY (1,1) NOT NULL
     ,testNum [int]
     ,testText [nvarchar] (max)
@@ -59,12 +121,7 @@ GO
 ---
 --- PROCEDURE Definitions
 ---
-IF OBJECT_ID ('Prac_PCreateTest1','P') IS NOT NULL
-BEGIN
-  DROP PROCEDURE Prac_PCreateTest1;
-END
-GO
-CREATE PROCEDURE Prac_PCreateTest1
+CREATE PROCEDURE PCreateTest1
      @Num [int]
     ,@Text [nvarchar] (max)
     ,@Id [int] OUTPUT
@@ -72,7 +129,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    INSERT INTO Prac_TTest1(testNum,testText) VALUES (@Num, @Text);
+    INSERT INTO TTest1(testNum,testText) VALUES (@Num, @Text);
     SET @Id = SCOPE_IDENTITY();
 END;
 
@@ -83,9 +140,9 @@ GO
 --- Data Definitions (INSERTs)
 ---
 DECLARE @Id int;
-EXEC Prac_PCreateTest1 @Num = 100, @Text = N'ABCD1234', @Id = @Id OUTPUT;
+EXEC PCreateTest1 @Num = 100, @Text = N'ABCD1234', @Id = @Id OUTPUT;
 PRINT @Id;
-EXEC Prac_PCreateTest1 @Num = 200, @Text = N'ABCD2234', @Id = @Id OUTPUT;
+EXEC PCreateTest1 @Num = 200, @Text = N'ABCD2234', @Id = @Id OUTPUT;
 PRINT @Id;
 GO
 
@@ -100,7 +157,6 @@ DECLARE @Type varchar(2)
 DECLARE CUR CURSOR LOCAL FOR
     SELECT name, type FROM sys.objects
     where (type = N'FN' OR type = N'P')
-        AND (name LIKE N'Prac_%')
 
 OPEN CUR;
 
