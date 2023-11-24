@@ -136,17 +136,6 @@ END;
 GO
 
 
----
---- Data Definitions (INSERTs)
----
-DECLARE @Id int;
-EXEC PCreateTest1 @Num = 100, @Text = N'ABCD1234', @Id = @Id OUTPUT;
-PRINT @Id;
-EXEC PCreateTest1 @Num = 200, @Text = N'ABCD2234', @Id = @Id OUTPUT;
-PRINT @Id;
-GO
-
-
 
 
 ---
@@ -177,3 +166,19 @@ BEGIN
 END
 
 GO
+
+
+
+---
+--- Data Definitions (INSERTs)
+---
+DECLARE @Id int;
+EXEC PCreateTest1 @Num = 100, @Text = N'ABCD1234', @Id = @Id OUTPUT;
+PRINT @Id;
+EXEC PCreateTest1 @Num = 200, @Text = N'ABCD2234', @Id = @Id OUTPUT;
+PRINT @Id;
+GO
+
+
+
+
