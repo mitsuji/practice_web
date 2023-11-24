@@ -3,12 +3,10 @@
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
 import { sleep } from "https://deno.land/x/sleep/mod.ts";
 import { DB } from "https://deno.land/x/sqlite/mod.ts";
-
-//import { Disposable, using } from "https://deno.land/x/disposable/mod.ts"; 
 import mssql from "npm:mssql@10.0.1";
 
 
-const mssqlPool = new mssql.ConnectionPool({
+const mssqlConfig = {
   user: "practice_rw",
   password: "prac_rw-1234",
   server: "172.29.249.104",
@@ -17,7 +15,9 @@ const mssqlPool = new mssql.ConnectionPool({
     encrypt: false, // deno で tls 使えない?
     useUTC: false, //
   },
-});
+};
+
+const mssqlPool = new mssql.ConnectionPool(mssqlConfig);
 
 
 const router = new Router();
@@ -57,6 +57,7 @@ router.get("/get2", async (context) => {
 router.get("/get3", async (context) => {
     console.log("GET3");
     let conn = await mssqlPool.connect();
+//    let conn = await mssql.connect(mssqlConfig);
     const dbReq = conn.request();
     const query = `SELECT * FROM TTest1;`;
     const rs = await dbReq.query(query);
@@ -64,8 +65,6 @@ router.get("/get3", async (context) => {
     console.log(r["testId"]);
     console.log(r["testNum"]);
     console.log(r["testText"]);    
-    conn.close;
-
     
 });
 router.post("/post1", async (context) => {
@@ -75,8 +74,16 @@ router.post("/post1", async (context) => {
     console.log("param2:" + params.get("param2"));
     context.response.body = "POST1";
 });
-router.post("/post2", (context) => {
-    context.response.body = "POST2";
+router.post("/post2", async (context) => {
+    let conn = await mssqlPool.connect();
+    const request = conn.request();
+    request.input('Num', mssql.Int, 300);
+    request.input('Text', mssql.NVarChar, "ABCD3234");
+    request.output('Id', mssql.Int);
+    let result = await request.execute('PCreateTest1');
+    const outId = result.output["Id"];
+    console.log(outId);
+    context.response.body = outId;
 });
 router.put("/put1", (context) => {
     context.response.body = "PUT1";
