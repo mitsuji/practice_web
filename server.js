@@ -1,8 +1,23 @@
-// deno run --allow-net --allow-read --allow-write server.js
+// deno run --allow-net --allow-read --allow-write --allow-env --allow-sys server.js
 
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
 import { sleep } from "https://deno.land/x/sleep/mod.ts";
 import { DB } from "https://deno.land/x/sqlite/mod.ts";
+
+//import { Disposable, using } from "https://deno.land/x/disposable/mod.ts"; 
+import mssql from "npm:mssql@10.0.1";
+
+
+const mssqlPool = new mssql.ConnectionPool({
+  user: "practice_rw",
+  password: "prac_rw-1234",
+  server: "172.29.249.104",
+  database: "practice",
+  options: {
+    encrypt: false, // deno で tls 使えない?
+    useUTC: false, //
+  },
+});
 
 
 const router = new Router();
@@ -38,6 +53,20 @@ router.get("/get2", async (context) => {
         db.close();
         context.response.body = r;
     }
+});
+router.get("/get3", async (context) => {
+    console.log("GET3");
+    let conn = await mssqlPool.connect();
+    const dbReq = conn.request();
+    const query = `SELECT * FROM TTest1;`;
+    const rs = await dbReq.query(query);
+    const r = rs.recordset[0];
+    console.log(r["testId"]);
+    console.log(r["testNum"]);
+    console.log(r["testText"]);    
+    conn.close;
+
+    
 });
 router.post("/post1", async (context) => {
     const params = await context.request.body({type:"form"}).value;
@@ -76,5 +105,9 @@ app.use(async (context, next) => {
 });
 app.use(router.routes());
 app.use(router.allowedMethods());
+
+
+
+
 
 await app.listen({ port: 8080 });
