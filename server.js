@@ -5,20 +5,14 @@ import { sleep } from "https://deno.land/x/sleep/mod.ts";
 import { DB } from "https://deno.land/x/sqlite/mod.ts";
 import mssql from "npm:mssql@10.0.1";
 
-
-const mssqlConfig = {
-  user: "practice_rw",
-  password: "prac_rw-1234",
-  server: "172.29.249.104",
-  database: "practice",
-  options: {
-    encrypt: false, // deno で tls 使えない?
-    useUTC: false, //
-  },
-};
+// [TODO] deno で Enctypt=true できない?
+const mssqlConfig = "Server=172.29.249.104,1433;Database=practice;User Id=practice_rw;Password=prac_rw-1234;Encrypt=false";
 
 const mssqlPool = new mssql.ConnectionPool(mssqlConfig);
-
+if(typeof mssqlPool.config.options.useUTC == "undefined")
+{
+  mssqlPool.config.options.useUTC = false;
+}
 
 const router = new Router();
 
