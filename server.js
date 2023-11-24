@@ -58,15 +58,15 @@ router.get("/get3", async (context) => {
 });
 router.post("/post1", async (context) => {
     const params = await context.request.body({type:"form"}).value;
-    console.log(typeof params);
     console.log("param1:" + params.get("param1"));
     console.log("param2:" + params.get("param2"));
     context.response.body = "POST1";
 });
 router.post("/post2", async (context) => {
+    const params = await context.request.body({type:"form"}).value;
     const request = mssqlConn.request();
-    request.input('Num', mssql.Int, 300);
-    request.input('Text', mssql.NVarChar, "ABCD3234");
+    request.input('Num', mssql.Int, params.get("num"));
+    request.input('Text', mssql.NVarChar, params.get("text"));
     request.output('Id', mssql.Int);
     let result = await request.execute('PCreateTest1');
     const outId = result.output["Id"];
