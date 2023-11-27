@@ -7,7 +7,7 @@ import mssql from "npm:mssql@10.0.1";
 
 // [TODO] deno で Enctypt=true できない?
 //        https://github.com/denoland/deno/issues/20594
-const mssqlConfig = "Server=172.29.249.104,1433;Database=practice;User Id=practice_rw;Password=prac_rw-1234;Encrypt=false";
+const mssqlConfig = "Server=172.31.240.161,1433;Database=practice;User Id=practice_rw;Password=prac_rw-1234;Encrypt=false";
 
 const router = new Router();
 
