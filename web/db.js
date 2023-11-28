@@ -10,11 +10,17 @@ function dbOpenOne() {
         const store2 = db.createObjectStore("store2", {autoIncrement: true});
         store2.add("foo");
         store2.add("bar");
+        const store3 = db.createObjectStore("store3", {keyPath: "uid"});
+        store3.add({uid:100,name:"foo100"});
+        store3.add({uid:200,name:"bar200"});
+        const store4 = db.createObjectStore("store4", {keyPath: "sid", autoIncrement: true});
+        store4.add({name:"foo"});
+        store4.add({name:"bar"});
     });
 }
 
-window.onload = (e) => {
-    document.querySelector(".test1button").addEventListener("click", async (event) => {
+window.onload = async(e) => {
+    {
         let db = await dbOpenOne();
         try {
             const tran = db.transaction(["store1"]);
@@ -32,14 +38,14 @@ window.onload = (e) => {
         } catch (error) {
             console.log("error: " + error);
         }
-        try {
-            const tran = db.transaction(["store2"]);
-            const request = tran.objectStore("store2").getAll();
-            let result = await dbExecute(request);
-            console.log(result);
-        } catch (error) {
-            console.log("error: " + error);
-        }
+//        try {
+//            const tran = db.transaction(["store2"]);
+//            const request = tran.objectStore("store2").getAll();
+//            let result = await dbExecute(request);
+//            console.log(result);
+//        } catch (error) {
+//            console.log("error: " + error);
+//        }
         try {
             const tran = db.transaction(["store2"]);
             const request = tran.objectStore("store2").openCursor();
@@ -51,9 +57,31 @@ window.onload = (e) => {
         } catch (error) {
             console.log("error: " + error);
         }
+        try {
+            const tran = db.transaction(["store3"]);
+            const request = tran.objectStore("store3").openCursor();
+            await dbTraverse (request,(item) => {
+                console.log(item);
+            });
+        } catch (error) {
+            console.log("error: " + error);
+        }
+        try {
+            const tran = db.transaction(["store4"]);
+            const request = tran.objectStore("store4").openCursor();
+            await dbTraverse (request,(item) => {
+                console.log(item);
+            });
+        } catch (error) {
+            console.log("error: " + error);
+        }
+    }
+
+    document.querySelector(".test1button").addEventListener("click", async (event) => {
+        let db = await dbOpenOne();
 //        try {
 //            const tran = db.transaction(["store2"],"readwrite");
-//            const request = tran.objectStore("store2").add("booo");
+//            const request = tran.objectStore("store2").add("baz");
 //            await dbExecute(request);
 //        } catch (error) {
 //            console.log("error: " + error);
@@ -68,5 +96,19 @@ window.onload = (e) => {
 //        } catch (error) {
 //            console.log("error: " + error);
 //        }
+//        try {
+//            const tran = db.transaction(["store3"],"readwrite");
+//            const request = tran.objectStore("store3").add({uid:300,name:"baz300"})
+//            await dbExecute(request);
+//        } catch (error) {
+//            console.log("error: " + error);
+//        }
+        try {
+            const tran = db.transaction(["store4"],"readwrite");
+            const request = tran.objectStore("store4").add({name:"baz"})
+            await dbExecute(request);
+        } catch (error) {
+            console.log("error: " + error);
+        }
     });
 };
