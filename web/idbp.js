@@ -18,7 +18,7 @@ function dbTraverse(request, onCursor) {
         request.onsuccess = (event) => {
             let cursor = event.target.result;
             if (cursor) {
-                onCursor(cursor.value);
+                onCursor(cursor);
                 cursor.continue();
             } else {
                 resolve();
