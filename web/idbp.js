@@ -48,7 +48,7 @@ function dbTransaction(tran, withTransaction) {
 
 function dbOpen(name, version, onUpgradeneeded) {
     return new Promise((resolve,reject) => {
-        const request = window.indexedDB.open("db1",1);
+        const request = window.indexedDB.open(name,version);
         request.onerror = (event) => {
             reject("opendb error...");
         };
