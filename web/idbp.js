@@ -27,6 +27,28 @@ function dbTraverse(request, onCursor) {
     });
 }
 
+// [TODO] pagesize, page
+function dbFind(request, cond) {
+    return new Promise((resolve,reject) => {
+        let results = [];
+        request.onerror = (event) => {
+            reject(event.target.error);
+        };
+        request.onsuccess = (event) => {
+            let cursor = event.target.result;
+            if (cursor) {
+                if (cond(cursor.value)) {
+                    results.push(cursor.value);
+                }
+                cursor.continue();
+            } else {
+                resolve(results);
+            }
+        };
+    });
+}
+
+
 function dbTransaction(tran, withTransaction) {
     return new Promise((resolve,reject) => {
         tran.onerror = (event) => {
