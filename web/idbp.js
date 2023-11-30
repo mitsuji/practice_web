@@ -1,33 +1,4 @@
 
-function dbExecute(request) {
-    return new Promise((resolve,reject) => {
-        request.onerror = (event) => {
-            reject(event.target.error);
-        };
-        request.onsuccess = (event) => {
-            resolve(event.target.result);
-        };
-    });
-}
-
-function dbTraverse(request, onCursor) {
-    return new Promise((resolve,reject) => {
-        request.onerror = (event) => {
-            reject(event.target.error);
-        };
-        request.onsuccess = (event) => {
-            let cursor = event.target.result;
-            if (cursor) {
-                onCursor(cursor);
-                cursor.continue();
-            } else {
-                resolve();
-            }
-        };
-    });
-}
-
-
 function dbGet(db, store, key) {
     return new Promise((resolve,reject) => {
         let results = [];
@@ -75,16 +46,54 @@ function dbAdd(db, store, value, key) {
             reject(event.target.error);
         };
         request.onsuccess = (event) => {
+            resolve(event.target.result);
+        };
+    });
+}
+
+function dbPut(db, store, value, key) {
+    return new Promise((resolve,reject) => {
+        let results = [];
+        const tran = db.transaction([store],"readwrite");
+        const request = tran.objectStore(store).put(value,key);
+        request.onerror = (event) => {
+            reject(event.target.error);
+        };
+        request.onsuccess = (event) => {
+            resolve(event.target.result);
+        };
+    });
+}
+
+function dbDelete(db, store, key) {
+    return new Promise((resolve,reject) => {
+        let results = [];
+        const tran = db.transaction([store],"readwrite");
+        const request = tran.objectStore(store).delete(key);
+        request.onerror = (event) => {
+            reject(event.target.error);
+        };
+        request.onsuccess = (event) => {
             resolve();
         };
     });
 }
 
 
-
-
-function dbTransaction(tran, withTransaction) {
+function dbExecute(request) {
     return new Promise((resolve,reject) => {
+        request.onerror = (event) => {
+            reject(event.target.error);
+        };
+        request.onsuccess = (event) => {
+            resolve(event.target.result);
+        };
+    });
+}
+
+function dbTransaction(db, stores, withTransaction) {
+    return new Promise((resolve,reject) => {
+        let tran = db.transaction(stores,"readwrite");
         tran.onerror = (event) => {
             reject("transaction error...");
         };

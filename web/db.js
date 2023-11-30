@@ -71,30 +71,41 @@ window.onload = async(e) => {
 //        }
 
 //        try {
-//            await dbTransaction (db.transaction(["store1","store2"],"readwrite"), async (tran) => {
-//                const store1 = tran.objectStore("store1");
-//                const store2 = tran.objectStore("store2");
-//                await dbExecute (store2.add("baz"));
-//                await dbExecute (store1.add("baz300",300));
-//            });
-//        } catch (error) {
-//            console.log("error: " + error);
-//        }
-//        try {
-//            const tran = db.transaction(["store3"],"readwrite");
-//            const request = tran.objectStore("store3").add({uid:300,name:"baz300"})
-//            await dbExecute(request);
-//        } catch (error) {
-//            console.log("error: " + error);
-//        }
-//        try {
-//            const tran = db.transaction(["store4"],"readwrite");
-//            const request = tran.objectStore("store4").add({name:"baz"})
-//            await dbExecute(request);
+//            await dbAdd(db, "store3", {uid:300,name:"baz300"});
 //        } catch (error) {
 //            console.log("error: " + error);
 //        }
 
+//        try {
+//            await dbAdd(db, "store4", {name:"baz"});
+//        } catch (error) {
+//            console.log("error: " + error);
+//        }
+
+//        try {
+//            await dbDelete(db, "store2", 6);
+//        } catch (error) {
+//            console.log("error: " + error);
+//        }
+
+//        try {
+//            await dbPut(db, "store1", "nananana", 400);
+//        } catch (error) {
+//            console.log("error: " + error);
+//        }
+
+        try {
+            await dbTransaction (db, ["store1","store2"], async (tran) => {
+                await dbExecute (tran.objectStore("store2").add("baz"));
+                await dbExecute (tran.objectStore("store1").add("baz300",300));
+                await dbExecute (tran.objectStore("store11").add("baz300",300));
+            });
+//            await dbAdd (db, "store2", "baz");
+//            await dbAdd (db, "store1", "baz300",300);
+//            await dbAdd (db, "store11", "baz300",300);
+        } catch (error) {
+            console.log("error: " + error);
+        }
 
 
     }
