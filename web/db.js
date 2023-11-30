@@ -1,7 +1,7 @@
 
 function dbOpenOne() {
 //    indexedDB.deleteDatabase("db1");
-    return dbOpen("db1",1,(event) => {
+    return dbOpen("db1", 2, (event) => {
         console.log("oldVersion:" + event.oldVersion);
         console.log("newVersion:" + event.newVersion);
         switch (event.oldVersion) {
@@ -21,9 +21,22 @@ function dbOpenOne() {
             store4.add({name:"foo"});
             store4.add({name:"bar"});
         }
-//        case 1 : {
-//            console.log("0 -> 1");
-//        }
+        case 1 : {
+            console.log("0 -> 1");
+            const tran = event.target.transaction;
+            const store1 = tran.objectStore("store1");
+            store1.add("baz300",300);
+            store1.add("baz400",400);
+            const store2 = tran.objectStore("store2");
+            store2.add("baz1");
+            store2.add("baz2");
+            const store3 = tran.objectStore("store3");
+            store3.add({uid:300,name:"baz300"});
+            store3.add({uid:400,name:"baz400"});
+            const store4 = tran.objectStore("store4");
+            store4.add({name:"baz1"});
+            store4.add({name:"baz2"});
+        }
 //        case 2 : {
 //            console.log("1 -> 2");
 //        }
@@ -94,18 +107,18 @@ window.onload = async(e) => {
 //            console.log("error: " + error);
 //        }
 
-        try {
-            await dbTransaction (db, ["store1","store2"], async (tran) => {
-                await dbExecute (tran.objectStore("store2").add("baz"));
-                await dbExecute (tran.objectStore("store1").add("baz300",300));
-                await dbExecute (tran.objectStore("store11").add("baz300",300));
-            });
-//            await dbAdd (db, "store2", "baz");
-//            await dbAdd (db, "store1", "baz300",300);
-//            await dbAdd (db, "store11", "baz300",300);
-        } catch (error) {
-            console.log("error: " + error);
-        }
+//        try {
+//            await dbTransaction (db, ["store1","store2"], async (tran) => {
+//                await dbExecute (tran.objectStore("store2").add("baz"));
+//                await dbExecute (tran.objectStore("store1").add("baz300",300));
+//                await dbExecute (tran.objectStore("store11").add("baz300",300));
+//            });
+////            await dbAdd (db, "store2", "baz");
+////            await dbAdd (db, "store1", "baz300",300);
+////            await dbAdd (db, "store11", "baz300",300);
+//        } catch (error) {
+//            console.log("error: " + error);
+//        }
 
 
     }
