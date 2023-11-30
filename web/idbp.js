@@ -27,10 +27,28 @@ function dbTraverse(request, onCursor) {
     });
 }
 
-// [TODO] pagesize, page
-function dbFind(request, cond) {
+
+function dbGet(db, store, key) {
     return new Promise((resolve,reject) => {
         let results = [];
+        const tran = db.transaction([store]);
+        const request = tran.objectStore(store).get(key);
+        request.onerror = (event) => {
+            reject(event.target.error);
+        };
+        request.onsuccess = (event) => {
+            resolve(event.target.result);
+        };
+    });
+}
+
+
+// [TODO] pagesize, page
+function dbFind(db, store, cond) {
+    return new Promise((resolve,reject) => {
+        let results = [];
+        const tran = db.transaction([store]);
+        const request = tran.objectStore(store).openCursor();
         request.onerror = (event) => {
             reject(event.target.error);
         };
@@ -47,6 +65,22 @@ function dbFind(request, cond) {
         };
     });
 }
+
+function dbAdd(db, store, value, key) {
+    return new Promise((resolve,reject) => {
+        let results = [];
+        const tran = db.transaction([store],"readwrite");
+        const request = tran.objectStore(store).add(value,key);
+        request.onerror = (event) => {
+            reject(event.target.error);
+        };
+        request.onsuccess = (event) => {
+            resolve();
+        };
+    });
+}
+
+
 
 
 function dbTransaction(tran, withTransaction) {

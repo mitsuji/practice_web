@@ -35,80 +35,41 @@ window.onload = async(e) => {
     {
         let db = await dbOpenOne();
 //        try {
-//            const tran = db.transaction(["store1"]);
-//            const request = tran.objectStore("store1").get(100);
-//            const result = await dbExecute(request);
+//            const result = await dbGet(db, "store1", 100);
 //            console.log(result);
-//        } catch (error) {
-//            console.log("error: " + error);
-//        }
-//        try {
-//            const tran = db.transaction(["store2"]);
-//            const request = tran.objectStore("store2").get(1);
-//            const result = await dbExecute(request);
-//            console.log(result);
-//        } catch (error) {
-//            console.log("error: " + error);
-//        }
-//        try {
-//            const tran = db.transaction(["store2"]);
-//            const request = tran.objectStore("store2").getAll();
-//            let result = await dbExecute(request);
-//            console.log(result);
-//        } catch (error) {
-//            console.log("error: " + error);
-//        }
-//        try {
-//            const tran = db.transaction(["store2"]);
-//            const request = tran.objectStore("store2").openCursor();
-//            let items = [];
-//            await dbTraverse (request,(cursor) => {
-//                items.push(cursor.value);
-//            });
-//            console.log(items);
-//        } catch (error) {
-//            console.log("error: " + error);
-//        }
-//        try {
-//            const tran = db.transaction(["store3"]);
-//            const request = tran.objectStore("store3").openCursor();
-//            await dbTraverse (request,(cursor) => {
-//                let x = cursor.value;
-////                x.name = x.name + "----";
-////                cursor.update(x);
-//                console.log(x);
-//            });
-//        } catch (error) {
-//            console.log("error: " + error);
-//        }
-        try {
-            const tran = db.transaction(["store3"]);
-            const request = tran.objectStore("store3").openCursor();
-//            let items = await dbFind (request,(item) => true);
-            let items = await dbFind (request,(item) => {
-                return item.name.startsWith("b");
-            });
-            console.log (items);
-        } catch (error) {
-            console.log("error: " + error);
-        }
-//        try {
-//            const tran = db.transaction(["store4"]);
-//            const request = tran.objectStore("store4").openCursor();
-//            await dbTraverse (request,(cursor) => {
-//                console.log(cursor.value);
-//            });
 //        } catch (error) {
 //            console.log("error: " + error);
 //        }
 
 //        try {
-//            const tran = db.transaction(["store2"],"readwrite");
-//            const request = tran.objectStore("store2").add("baz");
-//            await dbExecute(request);
+//            const result = await dbGet(db, "store2", 1);
+//            console.log(result);
 //        } catch (error) {
 //            console.log("error: " + error);
 //        }
+
+//        try {
+//            let items = await dbFind (db, "store3", (item) =>
+//                true
+////                item.name.startsWith("b")
+//            );
+//            console.log (items);
+//        } catch (error) {
+//            console.log("error: " + error);
+//        }
+
+//        try {
+//            await dbAdd(db, "store1", "baz", 300);
+//        } catch (error) {
+//            console.log("error: " + error);
+//        }
+
+//        try {
+//            await dbAdd(db, "store2", "baz");
+//        } catch (error) {
+//            console.log("error: " + error);
+//        }
+
 //        try {
 //            await dbTransaction (db.transaction(["store1","store2"],"readwrite"), async (tran) => {
 //                const store1 = tran.objectStore("store1");
