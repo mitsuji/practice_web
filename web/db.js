@@ -18,8 +18,13 @@ function dbOpenOne() {
             store3.add({uid:100,name:"foo100"});
             store3.add({uid:200,name:"bar200"});
             const store4 = db.createObjectStore("store4", {keyPath: "sid", autoIncrement: true});
-            store4.add({name:"foo"});
-            store4.add({name:"bar"});
+            store4.createIndex("email", "email", { unique: true });
+            store4.createIndex("sex", "sex", { unique: false });
+            store4.add({name:"foo",email:"foo@na-s.jp",sex:1});
+            store4.add({name:"bar",email:"bar@na-s.jp",sex:2});
+            store4.add({name:"baz1",email:"baz1@na-s.jp",sex:2});
+            store4.add({name:"baz2",email:"baz2@na-s.jp",sex:1});
+            store4.add({name:"baz3",email:"baz3@na-s.jp",sex:1});
         }
         case 1 : {
             console.log("0 -> 1");
@@ -61,15 +66,15 @@ window.onload = async(e) => {
 //            console.log("error: " + error);
 //        }
 
-//        try {
-//            let items = await dbFind (db, "store3", (item) =>
-//                true
-////                item.name.startsWith("b")
-//            );
-//            console.log (items);
-//        } catch (error) {
-//            console.log("error: " + error);
-//        }
+        try {
+            let items = await dbFind (db, "store3", (item) =>
+                true
+//                item.name.startsWith("b")
+            );
+            console.log (items);
+        } catch (error) {
+            console.log("error: " + error);
+        }
 
 //        try {
 //            await dbAdd(db, "store1", "baz", 300);
